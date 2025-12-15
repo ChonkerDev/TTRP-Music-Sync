@@ -1,0 +1,29 @@
+<Window xmlns="https://github.com/avaloniaui"
+        xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+        xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
+        xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+        xmlns:labs="using:Avalonia.Labs.Controls"
+        xmlns:viewModel="clr-namespace:Music_Synchronizer.MVVM.ViewModel"
+        mc:Ignorable="d" d:DesignWidth="500" d:DesignHeight="500"
+        x:Class="Music_Synchronizer.MVVM.View.MainWindowView"
+        x:DataType="viewModel:MainWindowViewModel"
+        Title="Music Synchronizer"
+        Width="900"
+        Height="600"
+        MinWidth="900"
+        MinHeight="600"
+        MaxWidth="900"
+        MaxHeight="600"
+        CanResize="False">
+    <Grid>
+        <Grid>
+            <UniformGrid HorizontalAlignment="Center" VerticalAlignment="Center"
+                         IsVisible="{Binding !ShowStartupOptions}">
+                <Button Content="Host" Command="{Binding GoToHostPageCommand}"></Button>
+                <Button Content="Client" Command="{Binding GoToClientPageCommand}"></Button>
+            </UniformGrid>
+        </Grid>
+
+        <ContentControl IsVisible="{Binding ShowStartupOptions}" Content="{Binding CurrentView}"></ContentControl>
+    </Grid>
+</Window>

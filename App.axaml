@@ -1,0 +1,19 @@
+<Application xmlns="https://github.com/avaloniaui"
+             xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+             xmlns:viewModel="clr-namespace:Music_Synchronizer.MVVM.ViewModel"
+             xmlns:view="clr-namespace:Music_Synchronizer.MVVM.View"
+             x:Class="Music_Synchronizer.App"
+             RequestedThemeVariant="Default">
+    <Application.Styles>
+        <FluentTheme />
+    </Application.Styles>
+
+    <Application.DataTemplates>
+        <DataTemplate DataType="viewModel:ClientViewModel">
+            <view:ClientView />
+        </DataTemplate>
+        <DataTemplate DataType="viewModel:HostViewModel">
+            <view:HostView />
+        </DataTemplate>
+    </Application.DataTemplates>
+</Application>

@@ -1,0 +1,32 @@
+﻿<UserControl xmlns="https://github.com/avaloniaui"
+             xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+             xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
+             xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+             xmlns:viewModel="clr-namespace:Music_Synchronizer.MVVM.ViewModel"
+             xmlns:controls="clr-namespace:Music_Synchronizer.Controls"
+             mc:Ignorable="d" d:DesignWidth="800" d:DesignHeight="450"
+             x:Class="Music_Synchronizer.MVVM.View.HostView"
+             x:DataType="viewModel:HostViewModel">
+    <Grid>
+        <StackPanel IsVisible="{Binding !IsHosting}" HorizontalAlignment="Center" VerticalAlignment="Center">
+            <StackPanel Orientation="Vertical" HorizontalAlignment="Center" Margin="10">
+                <Label VerticalAlignment="Center" HorizontalAlignment="Center" Content="Port"></Label>
+                <TextBox x:Name="PortTextBox" Text="{Binding PortInput, Mode=TwoWay}"></TextBox>
+            </StackPanel>
+            <Button HorizontalAlignment="Center" VerticalAlignment="Center" Width="200" Height="200" Command="{Binding StartHostCommand}">
+                <Viewbox Stretch="Uniform">
+                    <TextBlock Text="Start Host" />
+                </Viewbox>
+            </Button>
+        </StackPanel>
+
+
+        <Grid RowDefinitions="*, 100" IsVisible="{Binding IsHosting}">
+            <Button HorizontalAlignment="Right" VerticalAlignment="Top" Content="Stop Host"
+                    Command="{Binding StopHostCommand}">
+            </Button>
+            <Grid Grid.Row="0"> </Grid>
+            <controls:MusicControls Grid.Row="1" />
+        </Grid>
+    </Grid>
+</UserControl>

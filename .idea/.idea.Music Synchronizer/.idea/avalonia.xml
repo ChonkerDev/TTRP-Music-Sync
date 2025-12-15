@@ -1,0 +1,16 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<project version="4">
+  <component name="AvaloniaProject">
+    <option name="projectPerEditor">
+      <map>
+        <entry key="App.axaml" value="Music Synchronizer.csproj" />
+        <entry key="Controls/MusicControls.axaml" value="Music Synchronizer.csproj" />
+        <entry key="MVVM/View/ClientView.axaml" value="Music Synchronizer.csproj" />
+        <entry key="MVVM/View/HostView.axaml" value="Music Synchronizer.csproj" />
+        <entry key="MVVM/View/MainWindowView.axaml" value="Music Synchronizer.csproj" />
+        <entry key="MVVM/View/StartupView.axaml" value="Music Synchronizer.csproj" />
+        <entry key="MainWindow.axaml" value="Music Synchronizer.csproj" />
+      </map>
+    </option>
+  </component>
+</project>
