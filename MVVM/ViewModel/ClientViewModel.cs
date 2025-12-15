@@ -25,6 +25,8 @@ public partial class ClientViewModel : ObservableObject {
 
     public bool IsConnected => _musicClient.IsConnected;
     
+    public bool Connecting { get; set; }
+    
     private Task _connectToHostTask; 
 
     [RelayCommand]
@@ -46,8 +48,17 @@ public partial class ClientViewModel : ObservableObject {
             _userSettingsStorageService.UserSettingsFile.DefaultPortToConnectTo = port;
 
             _userSettingsStorageService.Save();
-            await _musicClient.ConnectToHost(_userSettingsStorageService.UserSettingsFile.DefaultIpToConnectTo,
-                _userSettingsStorageService.UserSettingsFile.DefaultPortToConnectTo);
+            try {
+                Connecting = true;
+                OnPropertyChanged(nameof(Connecting));
+                await _musicClient.ConnectToHost(_userSettingsStorageService.UserSettingsFile.DefaultIpToConnectTo,
+                    _userSettingsStorageService.UserSettingsFile.DefaultPortToConnectTo);
+            }
+            catch (Exception e) {
+                
+            }
+
+            Connecting = false;
             OnPropertyChanged(nameof(IsConnected));
         }
         catch (Exception e) {

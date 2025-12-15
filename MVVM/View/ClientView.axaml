@@ -2,6 +2,7 @@
              xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
              xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
              xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+             xmlns:progRing="clr-namespace:AvaloniaProgressRing;assembly=AvaloniaProgressRing"
              xmlns:viewModel="clr-namespace:Music_Synchronizer.MVVM.ViewModel"
              mc:Ignorable="d" d:DesignWidth="800" d:DesignHeight="450"
              x:Class="Music_Synchronizer.MVVM.View.ClientView"
@@ -17,7 +18,15 @@
                 <TextBox x:Name="PortTextBox" Text="{Binding PortInput}"></TextBox>
             </StackPanel>
             <Button Content="Connect To Host" Command="{Binding ConnectToHostCommand}"></Button>
+            <progRing:ProgressRing Width="80" 
+                                   Height="80"
+                                   IsActive="True"
+                                   HorizontalAlignment="Left"
+                                   VerticalAlignment="Top"
+                                   Foreground="Green"
+                                   Margin="10,20,0,0"/>
         </StackPanel>
+        
 
     </Grid>
 
