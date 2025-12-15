@@ -19,12 +19,15 @@
             <PrivateAssets Condition="'$(Configuration)' != 'Debug'">All</PrivateAssets>
         </PackageReference>
         <PackageReference Include="CommunityToolkit.Mvvm" Version="8.4.0" />
+        <PackageReference Include="Deadpikle.AvaloniaProgressRing" Version="0.10.10" />
         <PackageReference Include="Microsoft.Extensions.DependencyInjection" Version="10.0.1" />
         <PackageReference Include="NAudio" Version="2.2.1" />
         <PackageReference Include="Notification.Avalonia" Version="2.2.0" />
+        <PackageReference Include="YoutubeDLSharp" Version="1.1.2" />
     </ItemGroup>
 
     <ItemGroup>
+      <Folder Include="Controls\" />
       <Folder Include="MVVM\Model\" />
     </ItemGroup>
 

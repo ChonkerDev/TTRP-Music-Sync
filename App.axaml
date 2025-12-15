@@ -16,5 +16,8 @@
         <DataTemplate DataType="viewModel:HostViewModel">
             <view:HostView />
         </DataTemplate>
+        <DataTemplate DataType="viewModel:ClientConnectedViewModel">
+            <view:ClientConnectedView />
+        </DataTemplate>
     </Application.DataTemplates>
 </Application>

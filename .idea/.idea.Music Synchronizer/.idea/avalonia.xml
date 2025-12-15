@@ -5,6 +5,7 @@
       <map>
         <entry key="App.axaml" value="Music Synchronizer.csproj" />
         <entry key="Controls/MusicControls.axaml" value="Music Synchronizer.csproj" />
+        <entry key="MVVM/View/ClientConnectedView.axaml" value="Music Synchronizer.csproj" />
         <entry key="MVVM/View/ClientView.axaml" value="Music Synchronizer.csproj" />
         <entry key="MVVM/View/HostView.axaml" value="Music Synchronizer.csproj" />
         <entry key="MVVM/View/MainWindowView.axaml" value="Music Synchronizer.csproj" />

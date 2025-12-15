@@ -3,7 +3,6 @@
              xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
              xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
              xmlns:viewModel="clr-namespace:Music_Synchronizer.MVVM.ViewModel"
-             xmlns:controls="clr-namespace:Music_Synchronizer.Controls"
              mc:Ignorable="d" d:DesignWidth="800" d:DesignHeight="450"
              x:Class="Music_Synchronizer.MVVM.View.HostView"
              x:DataType="viewModel:HostViewModel">
@@ -21,12 +20,36 @@
         </StackPanel>
 
 
-        <Grid RowDefinitions="*, 100" IsVisible="{Binding IsHosting}">
-            <Button HorizontalAlignment="Right" VerticalAlignment="Top" Content="Stop Host"
-                    Command="{Binding StopHostCommand}">
-            </Button>
-            <Grid Grid.Row="0"> </Grid>
-            <controls:MusicControls Grid.Row="1" />
+        <Grid RowDefinitions="*, 50" IsVisible="{Binding IsHosting}">
+            <!-- main view -->
+            <Grid Grid.Row="0">
+                <Button HorizontalAlignment="Right" VerticalAlignment="Top" Content="Stop Host"
+                        Command="{Binding StopHostCommand}">
+                </Button>
+                <StackPanel Height="30" Orientation="Horizontal" HorizontalAlignment="Left" VerticalAlignment="Top">
+                    <Button Content="Download" Command="{Binding DownloadAudioFromVideoCommand}" ToolTip.Tip="Downloads audio from URL and registers file with management system"/>
+                    <TextBox x:Name="DownloadVideoAudioTextBox" Text="{Binding DownloadVideoAudioText, Mode=OneWayToSource}"></TextBox>
+                </StackPanel>
+
+            </Grid>
+            
+            <!-- controls -->
+            <Grid Grid.Row="1" Background="Gray" ColumnDefinitions="50, 50, *, 140">
+                <Button Grid.Column="0" IsVisible="{Binding !IsPlayingAudio}" VerticalAlignment="Center" x:Name="PlayToggleButton" Content="Play"/>
+                <Button Grid.Column="0" IsVisible="{Binding IsPlayingAudio}" VerticalAlignment="Center" x:Name="PauseToggleButton" Content="Pause"/>
+                <Button Grid.Column="1" VerticalAlignment="Center" x:Name="StopButton" Content="Stop"/>
+                <Slider Grid.Column="2" VerticalAlignment="Center" x:Name="SeekerSlider"  />
+                <StackPanel Grid.Column="3" x:Name="VolumeSlider" VerticalAlignment="Center" Orientation="Horizontal" Spacing="5" Margin="5">
+                    <TextBlock Text="🔊" VerticalAlignment="Center" />
+                    <Slider VerticalAlignment="Center" Width="100" Minimum="0" Maximum="100" Value="75" ValueChanged="VolumeSlider_OnValueChanged" />
+                </StackPanel>
+            </Grid>
+        </Grid>
+        
+        <!-- Download Overlay -->
+        <Grid IsVisible="{Binding DownloadOverlayActive}" Background="Black" Opacity="70" Margin="5">
+            <TextBox Text="Download Progress" HorizontalAlignment="Center"></TextBox>
+            <ProgressBar ShowProgressText="True" Value="{Binding DownloadVideoProgress, Mode=OneWay}"></ProgressBar>
         </Grid>
     </Grid>
 </UserControl>

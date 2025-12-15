@@ -12,57 +12,74 @@ namespace Music_Synchronizer.MVVM.ViewModel;
 public partial class ClientViewModel : ObservableObject {
     private readonly MusicClient _musicClient;
     private readonly UserSettingsStorageService _userSettingsStorageService;
+    private readonly YoutubeDownloadService _youtubeDownloadService;
 
-    public ClientViewModel(MusicClient musicClient, UserSettingsStorageService userSettingsStorageService) {
+    public ClientViewModel(MusicClient musicClient, UserSettingsStorageService userSettingsStorageService,
+        YoutubeDownloadService youtubeDownloadService, ClientConnectedViewModel clientConnectedViewModel) {
         _musicClient = musicClient;
         _userSettingsStorageService = userSettingsStorageService;
-        PortInput = _userSettingsStorageService.UserSettingsFile.DefaultPortToConnectTo.ToString();
-        IpInput = _userSettingsStorageService.UserSettingsFile.DefaultIpToConnectTo;
+        _youtubeDownloadService = youtubeDownloadService;
+        PortInput = _userSettingsStorageService.DataInstance.DefaultPortToConnectTo.ToString();
+        IpInput = _userSettingsStorageService.DataInstance.DefaultIpToConnectTo;
+        ClientConnectedViewModel = clientConnectedViewModel;
     }
 
     [ObservableProperty] private string _portInput;
     [ObservableProperty] private string _ipInput;
 
-    public bool IsConnected => _musicClient.IsConnected;
-    
-    public bool Connecting { get; set; }
-    
-    private Task _connectToHostTask; 
+    [ObservableProperty] private bool _isConnected;
+    [ObservableProperty] private bool _connecting;
+
+    public ClientConnectedViewModel ClientConnectedViewModel { get; }
+
+    private Task _connectToHostTask;
 
     [RelayCommand]
     public async Task ConnectToHost() {
+        if (!IPAddress.TryParse(IpInput, out var ip)) {
+            NotificationService.Notify("Please enter a valid IP address", "", NotificationType.Error);
+            return;
+        }
+
+        _userSettingsStorageService.DataInstance.DefaultIpToConnectTo = IpInput;
+
+
+        if (!int.TryParse(PortInput, out var port)) {
+            NotificationService.Notify("Please enter a valid port number", "", NotificationType.Error);
+            return;
+        }
+
+        _userSettingsStorageService.DataInstance.DefaultPortToConnectTo = port;
+
+        _userSettingsStorageService.Save();
         try {
-            if (!IPAddress.TryParse(IpInput, out var ip)) {
-                NotificationService.Notify("Please enter a valid IP address", "", NotificationType.Error);
-                return;
-            }
+            Connecting = true;
+            _musicClient.OnConnected += OnConnected;
+            await _musicClient.ConnectToHost(_userSettingsStorageService.DataInstance.DefaultIpToConnectTo,
+                _userSettingsStorageService.DataInstance.DefaultPortToConnectTo);
+            _musicClient.OnDisconnected += OnDisconnected;
 
-            _userSettingsStorageService.UserSettingsFile.DefaultIpToConnectTo = IpInput;
-
-
-            if (!int.TryParse(PortInput, out var port)) {
-                NotificationService.Notify("Please enter a valid port number", "", NotificationType.Error);
-                return;
-            }
-
-            _userSettingsStorageService.UserSettingsFile.DefaultPortToConnectTo = port;
-
-            _userSettingsStorageService.Save();
-            try {
-                Connecting = true;
-                OnPropertyChanged(nameof(Connecting));
-                await _musicClient.ConnectToHost(_userSettingsStorageService.UserSettingsFile.DefaultIpToConnectTo,
-                    _userSettingsStorageService.UserSettingsFile.DefaultPortToConnectTo);
-            }
-            catch (Exception e) {
-                
-            }
-
-            Connecting = false;
-            OnPropertyChanged(nameof(IsConnected));
         }
         catch (Exception e) {
+            _musicClient.OnConnected -= OnConnected;
             NotificationService.Notify("Unable To Connect To Host", e.Message, NotificationType.Error);
+            IsConnected = false;
         }
+        finally {
+            Connecting = false;
+        }
+    }
+
+    private void OnDisconnected() {
+        _musicClient.OnConnected -= OnConnected;
+        _musicClient.OnDisconnected -= OnDisconnected;
+        IsConnected = false;
+        NotificationService.Notify("Disconnected", "", NotificationType.Warning);
+
+    }
+
+    private void OnConnected() {
+        IsConnected = true;
+        NotificationService.Notify("Connected to Host", "", NotificationType.Success);
     }
 }

@@ -13,18 +13,19 @@ public class MusicClient {
     public event Action<SyncMessage> OnMessageReceived;
     public event Action<string> OnLog;
 
+    public Action OnDisconnected;
+    public Action OnConnected;
+
     public bool IsConnected => _isConnected;
 
     public MusicClient() {
-        OnMessageReceived += message => {
-            Console.WriteLine(message);
-        };
+
     }
     public async Task ConnectToHost(string hostIp, int port = 5000) {
         _client = new TcpClient();
         await _client.ConnectAsync(hostIp, port);
         _isConnected = true;
-
+        OnConnected?.Invoke();
         OnLog?.Invoke($"Connected to host {hostIp}:{port}");
 
         // Listen for messages
@@ -58,7 +59,7 @@ public class MusicClient {
                     break;
                 }
             }
-
+            OnDisconnected?.Invoke();
             OnLog?.Invoke("Disconnected from host");
         });
     }

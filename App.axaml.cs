@@ -17,17 +17,21 @@ public partial class App : Application {
     }
 
     public override void OnFrameworkInitializationCompleted() {
-
         var services = new ServiceCollection();
         services.AddSingleton<YoutubeDownloadService>();
         services.AddSingleton<MainWindowViewModel>();
         services.AddSingleton<HostViewModel>();
         services.AddSingleton<ClientViewModel>();
+        services.AddSingleton<ClientConnectedViewModel>();
+
+        services.AddSingleton<NAudioPlayerService>();
 
         services.AddSingleton<MusicHost>();
         services.AddSingleton<MusicClient>();
-        services.AddSingleton<UserSettingsStorageService>();
 
+        services.AddSingleton<UserSettingsStorageService>();
+        services.AddSingleton<AudioFilesRepositoryStorageService>();
+        
         var serviceProvider = services.BuildServiceProvider();
         if (ApplicationLifetime is IClassicDesktopStyleApplicationLifetime desktop) {
             desktop.MainWindow = new MainWindowView() {

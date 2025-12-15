@@ -38,7 +38,6 @@ public class MusicHost {
 
         // Accept clients in background
         _ = Task.Run(async () => {
-            _ = testMessageSending();
             while (_isRunning) {
                 try {
                     var client = await _listener.AcceptTcpClientAsync();
@@ -53,18 +52,6 @@ public class MusicHost {
                 }
             }
         });
-    }
-
-    private async Task testMessageSending() {
-
-        while (_isRunning) {
-            await Task.Delay(2000);
-            await BroadcastMessage(new SyncMessage() {
-                Type = MessageType.Play,
-                Position = 0,
-                Timestamp = 0
-            });
-        }
     }
 
     public async Task BroadcastMessage(SyncMessage message) {

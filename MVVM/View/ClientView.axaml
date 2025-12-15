@@ -8,25 +8,27 @@
              x:Class="Music_Synchronizer.MVVM.View.ClientView"
              x:DataType="viewModel:ClientViewModel">
     <Grid>
-        <StackPanel HorizontalAlignment="Center" VerticalAlignment="Center" Orientation="Vertical">
+        <StackPanel IsVisible="{Binding !IsConnected}"  HorizontalAlignment="Center" VerticalAlignment="Center" Orientation="Vertical">
             <StackPanel>
-                <Label Content="IP"/>
+                <Label Content="IP" />
                 <TextBox x:Name="IpTextBox" Text="{Binding IpInput}"></TextBox>
             </StackPanel>
             <StackPanel>
-                <Label Content="Port"/>
+                <Label Content="Port" />
                 <TextBox x:Name="PortTextBox" Text="{Binding PortInput}"></TextBox>
             </StackPanel>
             <Button Content="Connect To Host" Command="{Binding ConnectToHostCommand}"></Button>
-            <progRing:ProgressRing Width="80" 
+            <progRing:ProgressRing IsVisible="{Binding Connecting}"
+                                   Width="80"
                                    Height="80"
                                    IsActive="True"
                                    HorizontalAlignment="Left"
                                    VerticalAlignment="Top"
                                    Foreground="Green"
-                                   Margin="10,20,0,0"/>
+                                   Margin="10,20,0,0" />
         </StackPanel>
-        
+
+        <ContentPresenter IsVisible="{Binding IsConnected}" Content="{Binding ClientConnectedViewModel}"></ContentPresenter>
 
     </Grid>
 
