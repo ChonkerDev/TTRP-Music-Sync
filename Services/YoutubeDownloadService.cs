@@ -1,6 +1,7 @@
 ﻿using System;
 using System.Diagnostics;
 using System.IO;
+using System.Linq;
 using System.Threading;
 using System.Threading.Tasks;
 using Avalonia.Controls.Notifications;
@@ -21,6 +22,7 @@ public class YoutubeDownloadService {
         _youtubeDL.YoutubeDLPath = MusicSynchronizerPaths.ytdlpPath;
 
         _youtubeDL.OutputFolder = MusicSynchronizerPaths.MusicStoragePath;
+        _youtubeDL.RestrictFilenames = true;
     }
 
     public async Task<RunResult<string>> Download(string link, Action<DownloadProgress> OnProgress) {

@@ -1,5 +1,6 @@
 ﻿using System.IO;
 using System.Threading.Tasks;
+using Avalonia.Controls.Notifications;
 using CommunityToolkit.Mvvm.ComponentModel;
 using Music_Synchronizer.Data;
 using Music_Synchronizer.Services;
@@ -44,8 +45,12 @@ public partial class ClientConnectedViewModel : ObservableObject {
         if (!_audioFilesRepositoryStorageService.DataInstance.AudioFileDataDictionary.TryGetValue(
                 message.FileId, out var audioFile)) {
             IsDownloadingFile = true;
-            await _youtubeDownloadService.Download(message.FileUrl, progress => DownloadProgress = progress.Progress);
+            var result = await _youtubeDownloadService.Download(message.FileUrl, progress => DownloadProgress = progress.Progress);
             IsDownloadingFile = false;
+            if (!result.Success) {
+                NotificationService.Notify($"Unable to Download File: {message.FileUrl}", "" , NotificationType.Error );
+                return;
+            }
         }
         
         _nAudioPlayerService.Load(Path.Combine(MusicSynchronizerPaths.MusicStoragePath, audioFile.FileName));

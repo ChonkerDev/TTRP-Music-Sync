@@ -19,7 +19,7 @@
 
         </Grid>
         <Grid IsVisible="{Binding IsDownloadingFile}" Background="Black" Opacity="70">
-            <TextBlock Text="Downloading">
+            <TextBlock Foreground="AliceBlue" HorizontalAlignment="Center" VerticalAlignment="Center" Text="Downloading">
 
             </TextBlock>
         </Grid>

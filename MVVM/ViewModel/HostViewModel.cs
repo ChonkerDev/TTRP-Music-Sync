@@ -47,10 +47,10 @@ public partial class HostViewModel : ObservableObject {
     [ObservableProperty] private double _downloadVideoProgress;
     [ObservableProperty] private string _searchBoxText;
 
+    private float _currentVolume = .75f;
+
     public ObservableCollection<MusicTableEntryModel> MusicList { get; }
-
-    private Dictionary<string, MusicTableEntryModel> _musicData = new();
-
+    
     private MusicTableEntryModel? _currentMusicData;
 
 
@@ -174,7 +174,7 @@ public partial class HostViewModel : ObservableObject {
     public async Task PlayMusic(MusicTableEntryModel audioFileData) {
         _naudioPlayerService.Load(Path.Combine(MusicSynchronizerPaths.MusicStoragePath, audioFileData.FileName));
         _naudioPlayerService.Play();
-        _naudioPlayerService.Volume = .75f;
+        _naudioPlayerService.Volume = _currentVolume;
         SyncMessage syncMessage = new SyncMessage();
         syncMessage.Type = MessageType.LoadAndPlay;
         syncMessage.FileUrl = audioFileData.FileUrl;
@@ -184,7 +184,8 @@ public partial class HostViewModel : ObservableObject {
     }
 
     public void OnVolumeSliderChanged(double newVolume) {
-        _naudioPlayerService.Volume = (float)newVolume / 100f;
+        _currentVolume = (float)newVolume / 100f;
+        _naudioPlayerService.Volume = _currentVolume;
     }
 
     partial void OnSearchBoxTextChanged(string searchBoxText) {
