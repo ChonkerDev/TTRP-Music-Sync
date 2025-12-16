@@ -90,7 +90,7 @@
             </Grid>
 
             <!-- controls -->
-            <Grid Grid.Row="2" Background="Gray" ColumnDefinitions="60, 60, *, 140" ColumnSpacing="5">
+            <Grid Grid.Row="2" Background="Gray" ColumnDefinitions="60, 60, 140" ColumnSpacing="5">
                 <Button HorizontalAlignment="Stretch" HorizontalContentAlignment="Center" Grid.Column="0"
                         IsVisible="{Binding !IsPlayingAudio}" VerticalAlignment="Center"
                         x:Name="PlayToggleButton" Content="Play" Command="{Binding TogglePLayCommand}"
@@ -103,7 +103,7 @@
                         Command="{Binding StopMusicCommand}"
                         ToolTip.Tip="Unloads current music for all clients and host" />
                 <!--<Slider Grid.Column="2" VerticalAlignment="Center" x:Name="SeekerSlider" />-->
-                <StackPanel Grid.Column="3" x:Name="VolumeSlider" VerticalAlignment="Center" Orientation="Horizontal"
+                <StackPanel Grid.Column="2" x:Name="VolumeSlider" VerticalAlignment="Center" Orientation="Horizontal"
                             Spacing="5" Margin="5">
                     <TextBlock Text="🔊" VerticalAlignment="Center" />
                     <Slider VerticalAlignment="Center" Width="200" Minimum="0" Maximum="100" Value="75"

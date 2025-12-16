@@ -28,6 +28,9 @@ public partial class ClientConnectedViewModel : ObservableObject {
         _nAudioPlayerService = nAudioPlayerService;
         _musicClient.OnMessageReceived += MusicClientOnOnMessageReceived;
         _musicClient.OnDisconnected += OnDisconnected;
+
+        VolumeSlider = 75;
+        IsPlaying = true; // initializing to true so music auto plays first time recieving request
     }
 
     private void MusicClientOnOnMessageReceived(PlayerState message) {
