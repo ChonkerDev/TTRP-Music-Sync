@@ -1,5 +1,5 @@
 # TTRP-Music-Sync
-Requires yt-dlp and ffmpeg
+Requires yt-dlp and ffmpeg.
 This is intended to be used with friends. Don't setup VPN's with people you don't know.
 
 Instructions:
