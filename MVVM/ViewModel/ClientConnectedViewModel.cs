@@ -1,4 +1,5 @@
-﻿using System.IO;
+﻿using System;
+using System.IO;
 using System.Threading.Tasks;
 using Avalonia.Controls.Notifications;
 using CommunityToolkit.Mvvm.ComponentModel;
@@ -41,16 +42,11 @@ public partial class ClientConnectedViewModel : ObservableObject {
     [ObservableProperty] private string _playingFileText;
 
 
+
     private async Task HandleLoadAndPlay(SyncMessage message) {
         if (!_audioFilesRepositoryStorageService.DataInstance.AudioFileDataDictionary.TryGetValue(
                 message.FileId, out var audioFile)) {
-            IsDownloadingFile = true;
-            var result = await _youtubeDownloadService.Download(message.FileUrl, progress => DownloadProgress = progress.Progress);
-            IsDownloadingFile = false;
-            if (!result.Success) {
-                NotificationService.Notify($"Unable to Download File: {message.FileUrl}", "" , NotificationType.Error );
-                return;
-            }
+            await DownloadFile(message.FileUrl);
         }
         
         _nAudioPlayerService.Load(Path.Combine(MusicSynchronizerPaths.MusicStoragePath, audioFile.FileName));
@@ -58,4 +54,26 @@ public partial class ClientConnectedViewModel : ObservableObject {
         PlayingFileText = audioFile.FileName;
         IsPlaying = true;
     }
+
+    private async Task DownloadFile(string link) {
+        IsDownloadingFile = true;
+        try {
+            var result = await _youtubeDownloadService.Download(link, (progress => {
+                DownloadProgress = progress.Progress;
+                Console.WriteLine(progress.Progress);
+            }));
+            if (result.Success) {
+                AudioFileData fileData = new AudioFileData(result,link);
+
+                _audioFilesRepositoryStorageService.DataInstance.AudioFileDataDictionary[fileData.FileId] = fileData;
+                _audioFilesRepositoryStorageService.Save();
+            }
+        }
+        catch (Exception e) {
+            NotificationService.Notify("Download Failed", e.Message, NotificationType.Error);
+        }
+        finally {
+            IsDownloadingFile = false;
+        }
+    } 
 }
