@@ -51,6 +51,7 @@ public partial class ClientConnectedViewModel : ObservableObject {
 
     [ObservableProperty] private bool _isDownloadingFile;
     [ObservableProperty] private double _downloadProgress;
+    [ObservableProperty] private string _downloadFileName;
     [ObservableProperty] private bool _isPlaying;
     [ObservableProperty] private string _playingFileText;
     [ObservableProperty] private bool _fileLoaded;
@@ -72,7 +73,9 @@ public partial class ClientConnectedViewModel : ObservableObject {
     private async Task HandleLoad(PlayerState message) {
         if (!_audioFilesRepositoryStorageService.DataInstance.AudioFileDataDictionary.TryGetValue(
                 message.FileId, out var audioFile)) {
+            DownloadFileName = message.FileId;
             bool success = await DownloadFile(message.FileUrl);
+            DownloadFileName = string.Empty;
             if (!success) {
                 return;
             }
@@ -86,7 +89,8 @@ public partial class ClientConnectedViewModel : ObservableObject {
             _nAudioPlayerService.Volume = (float)VolumeSlider / 100;
             _nAudioPlayerService.Play();
         }
-        PlayingFileText = audioFile.FileName;
+
+        PlayingFileText = message.FileId;
     }
 
     private async Task<bool> DownloadFile(string link) {

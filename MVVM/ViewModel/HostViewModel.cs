@@ -46,6 +46,8 @@ public partial class HostViewModel : ObservableObject {
     [ObservableProperty] private string _downloadVideoAudioText;
     [ObservableProperty] private double _downloadVideoProgress;
     [ObservableProperty] private string _searchBoxText;
+    [ObservableProperty] private bool _isFileLoaded;
+    [ObservableProperty] private string _fileLoadedText;
 
     private float _currentVolume = .75f;
 
@@ -93,6 +95,8 @@ public partial class HostViewModel : ObservableObject {
         if (!_musicHost.IsRunning) return;
         _musicHost.Stop();
         _naudioPlayerService.Stop();
+        IsFileLoaded = false;
+        FileLoadedText = string.Empty;
         NotificationService.Notify("Host Stopped", "", NotificationType.Success);
         OnPropertyChanged(nameof(IsHosting));
         
@@ -154,6 +158,8 @@ public partial class HostViewModel : ObservableObject {
     [RelayCommand]
     public async Task PlayMusic(MusicTableEntryModel audioFileData) {
         _naudioPlayerService.Load(Path.Combine(MusicSynchronizerPaths.MusicStoragePath, audioFileData.FileName));
+        IsFileLoaded = true;
+        FileLoadedText = audioFileData.FileName;
         _naudioPlayerService.Play();
         _naudioPlayerService.Volume = _currentVolume;
         _currentPlayerState.FileLoaded = true;

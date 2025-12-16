@@ -10,30 +10,37 @@
         <Grid RowDefinitions="*, 100">
             <Grid>
                 <Grid IsVisible="{Binding IsDownloadingFile}" Background="Black" Opacity="90">
-                    <TextBlock Foreground="AliceBlue" HorizontalAlignment="Center" VerticalAlignment="Center" Text="Downloading">
-
+                    <TextBlock Foreground="AliceBlue" HorizontalAlignment="Center" VerticalAlignment="Center"
+                               Text="Downloading">
+                    </TextBlock>
+                    <TextBlock Foreground="AliceBlue" HorizontalAlignment="Center" VerticalAlignment="Center"
+                               Text="{Binding DownloadFileName}">
                     </TextBlock>
                 </Grid>
             </Grid>
 
-                <Grid Grid.Row="1" Background="Gray" ColumnDefinitions="60, 60, *, 200" ColumnSpacing="5">
-                    <Button HorizontalAlignment="Stretch" HorizontalContentAlignment="Center" Grid.Column="0" IsVisible="{Binding !IsPlaying}" VerticalAlignment="Center"
-                            x:Name="PlayToggleButton" Content="Play" Command="{Binding TogglePlayCommand}"
-                            ToolTip.Tip="Only affects local player, does not affect clients"/>
-                    <Button HorizontalAlignment="Stretch" HorizontalContentAlignment="Center" Grid.Column="0" IsVisible="{Binding IsPlaying}" VerticalAlignment="Center"
-                            x:Name="PauseToggleButton" Content="Pause" Command="{Binding TogglePlayCommand}"
-                            ToolTip.Tip="Only affects local player, does not affect clients"/>
-                    <StackPanel Grid.Column="2" IsVisible="{Binding FileLoaded}" Orientation="Vertical" VerticalAlignment="Center" HorizontalAlignment="Center">
-                        <TextBlock HorizontalAlignment="Left"  Text="Host File Loaded">
-                        </TextBlock>
-                        <TextBlock HorizontalAlignment="Left" Text="{Binding PlayingFileText}"></TextBlock>
-                    </StackPanel>
-                    <StackPanel Grid.Column="3" VerticalAlignment="Center" Orientation="Horizontal"
-                                Spacing="5" Margin="5">
-                        <TextBlock Text="🔊" VerticalAlignment="Center" />
-                        <Slider x:Name="VolumeSlider" VerticalAlignment="Center" Width="150" Minimum="0" Maximum="100" Value="{Binding VolumeSlider}"/>
-                    </StackPanel>
-                </Grid>
+            <Grid Grid.Row="1" Background="Gray" ColumnDefinitions="60, 60, *, 200" ColumnSpacing="5">
+                <Button HorizontalAlignment="Stretch" HorizontalContentAlignment="Center" Grid.Column="0"
+                        IsVisible="{Binding !IsPlaying}" VerticalAlignment="Center"
+                        x:Name="PlayToggleButton" Content="Play" Command="{Binding TogglePlayCommand}"
+                        ToolTip.Tip="Only affects local player, does not affect clients" />
+                <Button HorizontalAlignment="Stretch" HorizontalContentAlignment="Center" Grid.Column="0"
+                        IsVisible="{Binding IsPlaying}" VerticalAlignment="Center"
+                        x:Name="PauseToggleButton" Content="Pause" Command="{Binding TogglePlayCommand}"
+                        ToolTip.Tip="Only affects local player, does not affect clients" />
+                <StackPanel Grid.Column="2" IsVisible="{Binding FileLoaded}" Orientation="Vertical"
+                            VerticalAlignment="Center" HorizontalAlignment="Center">
+                    <TextBlock HorizontalAlignment="Left" Text="Host File Loaded">
+                    </TextBlock>
+                    <TextBlock HorizontalAlignment="Left" Text="{Binding PlayingFileText}"></TextBlock>
+                </StackPanel>
+                <StackPanel Grid.Column="3" VerticalAlignment="Center" Orientation="Horizontal"
+                            Spacing="5" Margin="5">
+                    <TextBlock Text="🔊" VerticalAlignment="Center" />
+                    <Slider x:Name="VolumeSlider" VerticalAlignment="Center" Width="150" Minimum="0" Maximum="100"
+                            Value="{Binding VolumeSlider}" />
+                </StackPanel>
+            </Grid>
         </Grid>
 
     </Grid>

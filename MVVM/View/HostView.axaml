@@ -23,11 +23,8 @@
 
         <Grid RowDefinitions="40, *, 50" IsVisible="{Binding IsHosting}">
             <!-- top bar -->
-            <Grid Grid.Row="0" Background="Gray">
-                <Button HorizontalAlignment="Right" VerticalAlignment="Center" Content="Stop Host"
-                        Command="{Binding StopHostCommand}">
-                </Button>
-                <StackPanel Height="30" Orientation="Horizontal" HorizontalAlignment="Left"
+            <Grid ColumnDefinitions="2*, *, 120" Grid.Row="0" Background="Gray" ColumnSpacing="10">
+                <StackPanel Grid.Column="0" Height="30" Orientation="Horizontal" HorizontalAlignment="Left"
                             VerticalAlignment="Center">
                     <Button Content="Download" Command="{Binding DownloadAudioFromVideoCommand}"
                             ToolTip.Tip="Downloads audio from URL and registers file with management system" />
@@ -36,13 +33,20 @@
                     </TextBox>
                 </StackPanel>
 
-                <StackPanel Margin="5" Height="30" Orientation="Horizontal" HorizontalAlignment="Center"
+                <StackPanel Grid.Column="1" Margin="0, 5" Height="30" Orientation="Horizontal"
+                            HorizontalAlignment="Center"
                             VerticalAlignment="Center">
                     <Label Content="Search: "></Label>
-                    <TextBox x:Name="SearchBox"
+                    <TextBox x:Name="SearchBox" Width="200"
                              Text="{Binding SearchBoxText, Mode=OneWayToSource}">
                     </TextBox>
                 </StackPanel>
+
+                <Grid  Grid.Column="2" HorizontalAlignment="Right" Margin="10, 0">
+                    <Button HorizontalAlignment="Stretch" VerticalAlignment="Center" Content="Stop Host"
+                            Command="{Binding StopHostCommand}">
+                    </Button>
+                </Grid>
             </Grid>
 
             <!-- main view -->
@@ -90,7 +94,7 @@
             </Grid>
 
             <!-- controls -->
-            <Grid Grid.Row="2" Background="Gray" ColumnDefinitions="60, 60, 140" ColumnSpacing="5">
+            <Grid Grid.Row="2" Background="Gray" ColumnDefinitions="60, 60, *, 200" ColumnSpacing="5">
                 <Button HorizontalAlignment="Stretch" HorizontalContentAlignment="Center" Grid.Column="0"
                         IsVisible="{Binding !IsPlayingAudio}" VerticalAlignment="Center"
                         x:Name="PlayToggleButton" Content="Play" Command="{Binding TogglePLayCommand}"
@@ -102,11 +106,16 @@
                 <Button Grid.Column="1" VerticalAlignment="Center" x:Name="StopButton" Content="Stop"
                         Command="{Binding StopMusicCommand}"
                         ToolTip.Tip="Unloads current music for all clients and host" />
-                <!--<Slider Grid.Column="2" VerticalAlignment="Center" x:Name="SeekerSlider" />-->
-                <StackPanel Grid.Column="2" x:Name="VolumeSlider" VerticalAlignment="Center" Orientation="Horizontal"
+                <StackPanel Grid.Column="2" IsVisible="{Binding IsFileLoaded}" Orientation="Vertical"
+                            VerticalAlignment="Center" HorizontalAlignment="Center">
+                    <TextBlock HorizontalAlignment="Left" Text="Host File Loaded">
+                    </TextBlock>
+                    <TextBlock HorizontalAlignment="Left" Text="{Binding FileLoadedText}"></TextBlock>
+                </StackPanel>
+                <StackPanel Grid.Column="3" x:Name="VolumeSlider" VerticalAlignment="Center" Orientation="Horizontal"
                             Spacing="5" Margin="5">
                     <TextBlock Text="🔊" VerticalAlignment="Center" />
-                    <Slider VerticalAlignment="Center" Width="200" Minimum="0" Maximum="100" Value="75"
+                    <Slider VerticalAlignment="Center" Width="150" Minimum="0" Maximum="100" Value="75"
                             ValueChanged="VolumeSlider_OnValueChanged" />
                 </StackPanel>
             </Grid>
