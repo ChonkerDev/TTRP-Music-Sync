@@ -30,7 +30,7 @@ public partial class ClientViewModel : ObservableObject {
     [ObservableProperty] private bool _connecting;
 
 
-    public ClientConnectedViewModel ClientConnectedViewModel { get; }
+    public object ClientConnectedViewModel { get; }
 
     private Task _connectToHostTask;
 

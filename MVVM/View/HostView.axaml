@@ -30,15 +30,15 @@
                 <StackPanel Height="30" Orientation="Horizontal" HorizontalAlignment="Left"
                             VerticalAlignment="Center">
                     <Button Content="Download" Command="{Binding DownloadAudioFromVideoCommand}"
-                            ToolTip.Tip="Downloads audio from URL and registers file with management system"/>
+                            ToolTip.Tip="Downloads audio from URL and registers file with management system" />
                     <TextBox x:Name="DownloadVideoAudioTextBox"
                              Text="{Binding DownloadVideoAudioText, Mode=OneWayToSource}">
                     </TextBox>
                 </StackPanel>
-                
+
                 <StackPanel Margin="5" Height="30" Orientation="Horizontal" HorizontalAlignment="Center"
                             VerticalAlignment="Center">
-<Label Content="Search: "></Label>
+                    <Label Content="Search: "></Label>
                     <TextBox x:Name="SearchBox"
                              Text="{Binding SearchBoxText, Mode=OneWayToSource}">
                     </TextBox>
@@ -66,7 +66,7 @@
                                 </DataTemplate>
                             </DataGridTemplateColumn.CellTemplate>
                         </DataGridTemplateColumn>
-                        
+
                         <DataGridTemplateColumn Header="Delete" Width="Auto">
                             <DataGridTemplateColumn.CellTemplate>
                                 <DataTemplate>
@@ -78,31 +78,39 @@
                         </DataGridTemplateColumn>
                     </DataGrid.Columns>
                 </DataGrid>
+                <!-- Download Overlay -->
+                <Grid IsVisible="{Binding DownloadOverlayActive}" Background="Black" Opacity="70" Margin="5">
+                    <StackPanel Orientation="Vertical" VerticalAlignment="Center" Spacing="5">
+                        <TextBlock Text="Download Progress" HorizontalAlignment="Center"></TextBlock>
+                        <ProgressBar Width="300" ShowProgressText="True"
+                                     Value="{Binding DownloadVideoProgress, Mode=OneWay}">
+                        </ProgressBar>
+                    </StackPanel>
+                </Grid>
             </Grid>
 
             <!-- controls -->
-            <Grid Grid.Row="2" Background="Gray" ColumnDefinitions="50, 50, *, 140">
-                <Button Grid.Column="0" IsVisible="{Binding !IsPlayingAudio}" VerticalAlignment="Center"
-                        x:Name="PlayToggleButton" Content="Play" Command="{Binding TogglePLayCommand}" />
-                <Button Grid.Column="0" IsVisible="{Binding IsPlayingAudio}" VerticalAlignment="Center"
-                        x:Name="PauseToggleButton" Content="Pause" Command="{Binding TogglePLayCommand}"/>
-                <Button Grid.Column="1" VerticalAlignment="Center" x:Name="StopButton" Content="Stop" />
-                <Slider Grid.Column="2" VerticalAlignment="Center" x:Name="SeekerSlider" />
+            <Grid Grid.Row="2" Background="Gray" ColumnDefinitions="60, 60, *, 140" ColumnSpacing="5">
+                <Button HorizontalAlignment="Stretch" HorizontalContentAlignment="Center" Grid.Column="0"
+                        IsVisible="{Binding !IsPlayingAudio}" VerticalAlignment="Center"
+                        x:Name="PlayToggleButton" Content="Play" Command="{Binding TogglePLayCommand}"
+                        ToolTip.Tip="Only affects local player, does not affect clients" />
+                <Button HorizontalAlignment="Stretch" HorizontalContentAlignment="Center" Grid.Column="0"
+                        IsVisible="{Binding IsPlayingAudio}" VerticalAlignment="Center"
+                        x:Name="PauseToggleButton" Content="Pause" Command="{Binding TogglePLayCommand}"
+                        ToolTip.Tip="Only affects local player, does not affect clients" />
+                <Button Grid.Column="1" VerticalAlignment="Center" x:Name="StopButton" Content="Stop"
+                        Command="{Binding StopMusicCommand}"
+                        ToolTip.Tip="Unloads current music for all clients and host" />
+                <!--<Slider Grid.Column="2" VerticalAlignment="Center" x:Name="SeekerSlider" />-->
                 <StackPanel Grid.Column="3" x:Name="VolumeSlider" VerticalAlignment="Center" Orientation="Horizontal"
                             Spacing="5" Margin="5">
                     <TextBlock Text="🔊" VerticalAlignment="Center" />
-                    <Slider VerticalAlignment="Center" Width="100" Minimum="0" Maximum="100" Value="75"
+                    <Slider VerticalAlignment="Center" Width="200" Minimum="0" Maximum="100" Value="75"
                             ValueChanged="VolumeSlider_OnValueChanged" />
                 </StackPanel>
             </Grid>
-        </Grid>
 
-        <!-- Download Overlay -->
-        <Grid IsVisible="{Binding DownloadOverlayActive}" Background="Black" Opacity="70" Margin="5">
-            <StackPanel Orientation="Vertical" VerticalAlignment="Center" Spacing="5">
-                <TextBlock Text="Download Progress" HorizontalAlignment="Center"></TextBlock>
-                <ProgressBar Width="300" ShowProgressText="True" Value="{Binding DownloadVideoProgress, Mode=OneWay}"></ProgressBar>
-            </StackPanel>
 
         </Grid>
     </Grid>

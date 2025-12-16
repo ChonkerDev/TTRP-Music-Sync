@@ -21,6 +21,7 @@ public class MusicHost {
     public Action<TcpClient> OnClientConnected;
     public Action<TcpClient> OnClientDisconnected;
 
+
     public MusicHost() {
         OnLog += message => { Console.WriteLine(message); };
     }
@@ -52,7 +53,7 @@ public class MusicHost {
         });
     }
 
-    public async Task BroadcastMessage(SyncMessage message, TcpClient? tcpClient = null) {
+    public async Task BroadcastMessage(PlayerState message, TcpClient? tcpClient = null) {
         message.Timestamp = DateTimeOffset.UtcNow.ToUnixTimeMilliseconds();
         var json = JsonSerializer.Serialize(message);
         var data = Encoding.UTF8.GetBytes(json + "\n");
@@ -90,16 +91,8 @@ public class MusicHost {
     }
 }
 
-public enum MessageType {
-    LoadAndPlay,
-    Play,
-    Pause,
-    Seek,
-    TimeSync
-}
-
-public class SyncMessage {
-    public MessageType Type { get; set; }
+public class PlayerState {
+    public bool FileLoaded { get; set; }
     public string FileUrl { get; set; }
 
     public string FileId { get; set; }

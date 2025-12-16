@@ -10,7 +10,7 @@ public class MusicClient {
     private TcpClient _client;
     private bool _isConnected;
 
-    public event Action<SyncMessage> OnMessageReceived;
+    public event Action<PlayerState> OnMessageReceived;
     public event Action<string> OnLog;
 
     public Action OnDisconnected;
@@ -45,7 +45,7 @@ public class MusicClient {
                     // Process complete messages (delimited by newline)
                     var messages = messageBuffer.ToString().Split('\n');
                     for (int i = 0; i < messages.Length - 1; i++) {
-                        var msg = JsonSerializer.Deserialize<SyncMessage>(messages[i]);
+                        var msg = JsonSerializer.Deserialize<PlayerState>(messages[i]);
                         OnMessageReceived?.Invoke(msg);
                     }
 

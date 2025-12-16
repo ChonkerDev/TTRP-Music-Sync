@@ -8,7 +8,8 @@
              x:Class="Music_Synchronizer.MVVM.View.ClientView"
              x:DataType="viewModel:ClientViewModel">
     <Grid>
-        <StackPanel IsVisible="{Binding !IsConnected}"  HorizontalAlignment="Center" VerticalAlignment="Center" Orientation="Vertical">
+        <StackPanel IsVisible="{Binding !IsConnected}" HorizontalAlignment="Center" VerticalAlignment="Center"
+                    Orientation="Vertical">
             <StackPanel>
                 <Label Content="IP" />
                 <TextBox x:Name="IpTextBox" Text="{Binding IpInput}"></TextBox>
@@ -28,8 +29,8 @@
                                    Margin="10,20,0,0" />
         </StackPanel>
 
-        <ContentPresenter IsVisible="{Binding IsConnected}" Content="{Binding ClientConnectedViewModel}"></ContentPresenter>
-
+        <ContentControl IsVisible="{Binding IsConnected}"
+                        Content="{Binding ClientConnectedViewModel}" />
     </Grid>
 
 </UserControl>

@@ -52,6 +52,9 @@ public partial class HostViewModel : ObservableObject {
     public ObservableCollection<MusicTableEntryModel> MusicList { get; }
     
     private MusicTableEntryModel? _currentMusicData;
+    
+    private PlayerState _currentPlayerState = new();
+
 
 
     [RelayCommand]
@@ -81,14 +84,8 @@ public partial class HostViewModel : ObservableObject {
     }
 
     private async Task HandleClientConnected(TcpClient client) {
-        if (IsPlayingAudio) {
-            var syncMessage =  new SyncMessage {
-                Type = MessageType.LoadAndPlay,
-                FileId = _currentMusicData.FileId,
-                FileUrl = _currentMusicData.FileUrl,
-            };
-            await _musicHost.BroadcastMessage(syncMessage, client);
-        }
+            await _musicHost.BroadcastMessage(_currentPlayerState, client);
+        
     }
 
     [RelayCommand]
@@ -102,32 +99,16 @@ public partial class HostViewModel : ObservableObject {
     }
 
     [RelayCommand]
-    public async Task TogglePLay() {
+    public void TogglePLay() {
         if (!_naudioPlayerService.IsMediaLoaded()) return;
 
         if (_naudioPlayerService.IsPlaying) {
-            _naudioPlayerService.Pause();
-            var syncMessage = new SyncMessage();
-            syncMessage.Type = MessageType.Play;
             IsPlayingAudio = false;
-            try {
-                await _musicHost.BroadcastMessage(syncMessage);
-            }
-            catch (Exception e) {
-                NotificationService.Notify("Error Broadcasting Play Message", e.Message, NotificationType.Error);
-            }
+            _naudioPlayerService.Pause();
         }
         else {
             _naudioPlayerService.Play();
             IsPlayingAudio = true;
-            try {
-                var syncMessage = new SyncMessage();
-                syncMessage.Type = MessageType.Pause;
-                await _musicHost.BroadcastMessage(syncMessage);
-            }
-            catch (Exception e) {
-                NotificationService.Notify("Error Broadcasting Pause Message", e.Message, NotificationType.Error);
-            }
         }
     }
 
@@ -175,12 +156,22 @@ public partial class HostViewModel : ObservableObject {
         _naudioPlayerService.Load(Path.Combine(MusicSynchronizerPaths.MusicStoragePath, audioFileData.FileName));
         _naudioPlayerService.Play();
         _naudioPlayerService.Volume = _currentVolume;
-        SyncMessage syncMessage = new SyncMessage();
-        syncMessage.Type = MessageType.LoadAndPlay;
-        syncMessage.FileUrl = audioFileData.FileUrl;
-        syncMessage.FileId = audioFileData.FileId;
+        _currentPlayerState.FileLoaded = true;
+        _currentPlayerState.FileUrl = audioFileData.FileUrl;
+        _currentPlayerState.FileId = audioFileData.FileId;
+        _currentMusicData = audioFileData;
         IsPlayingAudio = true;
-        await _musicHost.BroadcastMessage(syncMessage);
+        await _musicHost.BroadcastMessage(_currentPlayerState);
+    }
+
+    [RelayCommand]
+    public async Task StopMusic() {
+        _naudioPlayerService.Stop();
+        _currentMusicData = null;
+        _currentPlayerState.FileLoaded = false;
+        _currentPlayerState.FileUrl = null;
+        _currentPlayerState.FileId = null;
+        await _musicHost.BroadcastMessage(_currentPlayerState);
     }
 
     public void OnVolumeSliderChanged(double newVolume) {

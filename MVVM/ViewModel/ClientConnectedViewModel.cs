@@ -3,6 +3,7 @@ using System.IO;
 using System.Threading.Tasks;
 using Avalonia.Controls.Notifications;
 using CommunityToolkit.Mvvm.ComponentModel;
+using CommunityToolkit.Mvvm.Input;
 using Music_Synchronizer.Data;
 using Music_Synchronizer.Services;
 using Music_Synchronizer.Services.Storage;
@@ -25,45 +26,77 @@ public partial class ClientConnectedViewModel : ObservableObject {
         _youtubeDownloadService = youtubeDownloadService;
         _audioFilesRepositoryStorageService = audioFilesRepositoryStorageService;
         _nAudioPlayerService = nAudioPlayerService;
-        _musicClient.OnMessageReceived += message => {
-            if (message.Type == MessageType.LoadAndPlay) {
-                _ = HandleLoadAndPlay(message);
-            } else if (message.Type == MessageType.Pause) {
-                _nAudioPlayerService.Pause();
-            } else if (message.Type == MessageType.Play) {
-                _nAudioPlayerService.Play();
+        _musicClient.OnMessageReceived += MusicClientOnOnMessageReceived;
+        _musicClient.OnDisconnected += OnDisconnected;
+    }
+
+    private void MusicClientOnOnMessageReceived(PlayerState message) {
+            if (message.FileLoaded) {
+                _ = HandleLoad(message);
             }
-        };
+            else {
+                FileLoaded = false;
+                _nAudioPlayerService.Stop();
+            }
+
+        
+    }
+
+    private void OnDisconnected() {
+        NotificationService.Notify("Disconnected from host", "", NotificationType.Warning);
     }
 
     [ObservableProperty] private bool _isDownloadingFile;
     [ObservableProperty] private double _downloadProgress;
     [ObservableProperty] private bool _isPlaying;
     [ObservableProperty] private string _playingFileText;
+    [ObservableProperty] private bool _fileLoaded;
+    [ObservableProperty] private double _volumeSlider;
 
 
-
-    private async Task HandleLoadAndPlay(SyncMessage message) {
-        if (!_audioFilesRepositoryStorageService.DataInstance.AudioFileDataDictionary.TryGetValue(
-                message.FileId, out var audioFile)) {
-            await DownloadFile(message.FileUrl);
+    [RelayCommand]
+    public void TogglePlay() {
+        if (IsPlaying) {
+            _nAudioPlayerService.Pause();
+            IsPlaying = false;
         }
-        
-        _nAudioPlayerService.Load(Path.Combine(MusicSynchronizerPaths.MusicStoragePath, audioFile.FileName));
-        _nAudioPlayerService.Play();
-        PlayingFileText = audioFile.FileName;
-        IsPlaying = true;
+        else {
+            _nAudioPlayerService.Play();
+            IsPlaying = true;
+        }
     }
 
-    private async Task DownloadFile(string link) {
+    private async Task HandleLoad(PlayerState message) {
+        if (!_audioFilesRepositoryStorageService.DataInstance.AudioFileDataDictionary.TryGetValue(
+                message.FileId, out var audioFile)) {
+            bool success = await DownloadFile(message.FileUrl);
+            if (!success) {
+                return;
+            }
+        }
+
+        string path = Path.Combine(MusicSynchronizerPaths.MusicStoragePath,
+            _audioFilesRepositoryStorageService.DataInstance.AudioFileDataDictionary[message.FileId].FileName);
+        _nAudioPlayerService.Load(path);
+        FileLoaded = true;
+        if (IsPlaying) {
+            _nAudioPlayerService.Volume = (float)VolumeSlider / 100;
+            _nAudioPlayerService.Play();
+        }
+        PlayingFileText = audioFile.FileName;
+    }
+
+    private async Task<bool> DownloadFile(string link) {
         IsDownloadingFile = true;
+        bool success = false;
         try {
             var result = await _youtubeDownloadService.Download(link, (progress => {
                 DownloadProgress = progress.Progress;
                 Console.WriteLine(progress.Progress);
             }));
-            if (result.Success) {
-                AudioFileData fileData = new AudioFileData(result,link);
+            success = result.Success;
+            if (success) {
+                AudioFileData fileData = new AudioFileData(result, link);
 
                 _audioFilesRepositoryStorageService.DataInstance.AudioFileDataDictionary[fileData.FileId] = fileData;
                 _audioFilesRepositoryStorageService.Save();
@@ -75,5 +108,13 @@ public partial class ClientConnectedViewModel : ObservableObject {
         finally {
             IsDownloadingFile = false;
         }
-    } 
+
+        return success;
+    }
+
+    partial void OnVolumeSliderChanged(double value) {
+        if (_nAudioPlayerService.IsPlaying) {
+            _nAudioPlayerService.Volume = (float)value / 100;
+        }
+    }
 }
