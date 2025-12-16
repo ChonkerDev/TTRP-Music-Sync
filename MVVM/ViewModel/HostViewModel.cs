@@ -52,6 +52,10 @@ public partial class HostViewModel : ObservableObject {
     private float _currentVolume = .75f;
 
     public ObservableCollection<MusicTableEntryModel> MusicList { get; }
+
+    private ObservableCollection<string> ConnectedClients = new();
+
+    public int ClientsConnected => ConnectedClients.Count; 
     
     private MusicTableEntryModel? _currentMusicData;
     
@@ -80,14 +84,25 @@ public partial class HostViewModel : ObservableObject {
         NotificationService.Notify("Host Started", "", NotificationType.Success);
         OnPropertyChanged(nameof(IsHosting));
 
+        ConnectedClients = new();
         _musicHost.OnClientConnected += client => {
             _ = HandleClientConnected(client);
         };
+        _musicHost.OnClientDisconnected += OnClientDisconnected;
+    }
+
+    private void OnClientDisconnected(TcpClient obj) {
+        ConnectedClients.Add("Client");
+        NotificationService.Notify("Client Disconnected", "", NotificationType.Information);
+        OnPropertyChanged(nameof(ClientsConnected));
     }
 
     private async Task HandleClientConnected(TcpClient client) {
+        ConnectedClients.Remove("Client");
+        NotificationService.Notify("Client Connected", "", NotificationType.Information);
             await _musicHost.BroadcastMessage(_currentPlayerState, client);
-        
+            OnPropertyChanged(nameof(ClientsConnected));
+
     }
 
     [RelayCommand]
