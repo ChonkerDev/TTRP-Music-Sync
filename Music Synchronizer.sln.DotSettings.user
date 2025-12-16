@@ -5,4 +5,5 @@
 	<s:String x:Key="/Default/CodeInspection/ExcludedFiles/FilesAndFoldersToSkip2/=7020124F_002D9FFC_002D4AC3_002D8F3D_002DAAB8E0240759_002Ff_003AWindow_002Ecs_002Fl_003AC_0021_003FUsers_003Ftimot_003FAppData_003FRoaming_003FJetBrains_003FRider2025_002E3_003Fresharper_002Dhost_003FSourcesCache_003Ff718b5c32f421b57bee4b5226a7a2b21ff5a928677a8c91a18bdcea29ec998_003FWindow_002Ecs/@EntryIndexedValue">ForceIncluded</s:String>
 	<s:String x:Key="/Default/Environment/AssemblyExplorer/XmlDocument/@EntryValue">&lt;AssemblyExplorer&gt;&#xD;
   &lt;Assembly Path="C:\Users\timot\.nuget\packages\avalonia.labs.controls\11.3.1\lib\net6.0\Avalonia.Labs.Controls.dll" /&gt;&#xD;
+  &lt;Assembly Path="C:\Users\timot\.nuget\packages\avalonia.controls.datagrid\11.3.9\lib\net8.0\Avalonia.Controls.DataGrid.dll" /&gt;&#xD;
 &lt;/AssemblyExplorer&gt;</s:String></wpf:ResourceDictionary>

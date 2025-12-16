@@ -12,13 +12,12 @@ namespace Music_Synchronizer.MVVM.ViewModel;
 public partial class ClientViewModel : ObservableObject {
     private readonly MusicClient _musicClient;
     private readonly UserSettingsStorageService _userSettingsStorageService;
-    private readonly YoutubeDownloadService _youtubeDownloadService;
 
     public ClientViewModel(MusicClient musicClient, UserSettingsStorageService userSettingsStorageService,
-        YoutubeDownloadService youtubeDownloadService, ClientConnectedViewModel clientConnectedViewModel) {
+        ClientConnectedViewModel clientConnectedViewModel) {
         _musicClient = musicClient;
         _userSettingsStorageService = userSettingsStorageService;
-        _youtubeDownloadService = youtubeDownloadService;
+
         PortInput = _userSettingsStorageService.DataInstance.DefaultPortToConnectTo.ToString();
         IpInput = _userSettingsStorageService.DataInstance.DefaultIpToConnectTo;
         ClientConnectedViewModel = clientConnectedViewModel;
@@ -29,6 +28,7 @@ public partial class ClientViewModel : ObservableObject {
 
     [ObservableProperty] private bool _isConnected;
     [ObservableProperty] private bool _connecting;
+
 
     public ClientConnectedViewModel ClientConnectedViewModel { get; }
 
@@ -58,7 +58,6 @@ public partial class ClientViewModel : ObservableObject {
             await _musicClient.ConnectToHost(_userSettingsStorageService.DataInstance.DefaultIpToConnectTo,
                 _userSettingsStorageService.DataInstance.DefaultPortToConnectTo);
             _musicClient.OnDisconnected += OnDisconnected;
-
         }
         catch (Exception e) {
             _musicClient.OnConnected -= OnConnected;
@@ -75,7 +74,6 @@ public partial class ClientViewModel : ObservableObject {
         _musicClient.OnDisconnected -= OnDisconnected;
         IsConnected = false;
         NotificationService.Notify("Disconnected", "", NotificationType.Warning);
-
     }
 
     private void OnConnected() {

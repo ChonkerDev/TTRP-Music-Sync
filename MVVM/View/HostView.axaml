@@ -12,7 +12,8 @@
                 <Label VerticalAlignment="Center" HorizontalAlignment="Center" Content="Port"></Label>
                 <TextBox x:Name="PortTextBox" Text="{Binding PortInput, Mode=TwoWay}"></TextBox>
             </StackPanel>
-            <Button HorizontalAlignment="Center" VerticalAlignment="Center" Width="200" Height="200" Command="{Binding StartHostCommand}">
+            <Button HorizontalAlignment="Center" VerticalAlignment="Center" Width="200" Height="200"
+                    Command="{Binding StartHostCommand}">
                 <Viewbox Stretch="Uniform">
                     <TextBlock Text="Start Host" />
                 </Viewbox>
@@ -20,36 +21,89 @@
         </StackPanel>
 
 
-        <Grid RowDefinitions="*, 50" IsVisible="{Binding IsHosting}">
-            <!-- main view -->
-            <Grid Grid.Row="0">
-                <Button HorizontalAlignment="Right" VerticalAlignment="Top" Content="Stop Host"
+        <Grid RowDefinitions="40, *, 50" IsVisible="{Binding IsHosting}">
+            <!-- top bar -->
+            <Grid Grid.Row="0" Background="Gray">
+                <Button HorizontalAlignment="Right" VerticalAlignment="Center" Content="Stop Host"
                         Command="{Binding StopHostCommand}">
                 </Button>
-                <StackPanel Height="30" Orientation="Horizontal" HorizontalAlignment="Left" VerticalAlignment="Top">
-                    <Button Content="Download" Command="{Binding DownloadAudioFromVideoCommand}" ToolTip.Tip="Downloads audio from URL and registers file with management system"/>
-                    <TextBox x:Name="DownloadVideoAudioTextBox" Text="{Binding DownloadVideoAudioText, Mode=OneWayToSource}"></TextBox>
+                <StackPanel Height="30" Orientation="Horizontal" HorizontalAlignment="Left"
+                            VerticalAlignment="Center">
+                    <Button Content="Download" Command="{Binding DownloadAudioFromVideoCommand}"
+                            ToolTip.Tip="Downloads audio from URL and registers file with management system"/>
+                    <TextBox x:Name="DownloadVideoAudioTextBox"
+                             Text="{Binding DownloadVideoAudioText, Mode=OneWayToSource}">
+                    </TextBox>
                 </StackPanel>
-
+                
+                <StackPanel Margin="5" Height="30" Orientation="Horizontal" HorizontalAlignment="Center"
+                            VerticalAlignment="Center">
+<Label Content="Search: "></Label>
+                    <TextBox x:Name="SearchBox"
+                             Text="{Binding SearchBoxText, Mode=OneWayToSource}">
+                    </TextBox>
+                </StackPanel>
             </Grid>
-            
+
+            <!-- main view -->
+            <Grid Grid.Row="1" Background="LightBlue">
+                <DataGrid ItemsSource="{Binding MusicList}"
+                          AutoGenerateColumns="False"
+                          IsReadOnly="True"
+                          GridLinesVisibility="All"
+                          BorderThickness="1"
+                          BorderBrush="Gray">
+                    <DataGrid.Columns>
+                        <DataGridTextColumn Header="File Name" Binding="{Binding FileName}" Width="*" />
+                        <DataGridTextColumn Header="File ID" Binding="{Binding FileId}" Width="*" />
+
+                        <DataGridTemplateColumn Header="Play" Width="Auto">
+                            <DataGridTemplateColumn.CellTemplate>
+                                <DataTemplate>
+                                    <Button Content="Play"
+                                            Command="{Binding $parent[DataGrid].((viewModel:HostViewModel)DataContext).PlayMusicCommand}"
+                                            CommandParameter="{Binding}" />
+                                </DataTemplate>
+                            </DataGridTemplateColumn.CellTemplate>
+                        </DataGridTemplateColumn>
+                        
+                        <DataGridTemplateColumn Header="Delete" Width="Auto">
+                            <DataGridTemplateColumn.CellTemplate>
+                                <DataTemplate>
+                                    <Button Content="Delete"
+                                            Command="{Binding $parent[DataGrid].((viewModel:HostViewModel)DataContext).DeleteMusicCommand}"
+                                            CommandParameter="{Binding}" />
+                                </DataTemplate>
+                            </DataGridTemplateColumn.CellTemplate>
+                        </DataGridTemplateColumn>
+                    </DataGrid.Columns>
+                </DataGrid>
+            </Grid>
+
             <!-- controls -->
-            <Grid Grid.Row="1" Background="Gray" ColumnDefinitions="50, 50, *, 140">
-                <Button Grid.Column="0" IsVisible="{Binding !IsPlayingAudio}" VerticalAlignment="Center" x:Name="PlayToggleButton" Content="Play"/>
-                <Button Grid.Column="0" IsVisible="{Binding IsPlayingAudio}" VerticalAlignment="Center" x:Name="PauseToggleButton" Content="Pause"/>
-                <Button Grid.Column="1" VerticalAlignment="Center" x:Name="StopButton" Content="Stop"/>
-                <Slider Grid.Column="2" VerticalAlignment="Center" x:Name="SeekerSlider"  />
-                <StackPanel Grid.Column="3" x:Name="VolumeSlider" VerticalAlignment="Center" Orientation="Horizontal" Spacing="5" Margin="5">
+            <Grid Grid.Row="2" Background="Gray" ColumnDefinitions="50, 50, *, 140">
+                <Button Grid.Column="0" IsVisible="{Binding !IsPlayingAudio}" VerticalAlignment="Center"
+                        x:Name="PlayToggleButton" Content="Play" Command="{Binding TogglePLayCommand}" />
+                <Button Grid.Column="0" IsVisible="{Binding IsPlayingAudio}" VerticalAlignment="Center"
+                        x:Name="PauseToggleButton" Content="Pause" Command="{Binding TogglePLayCommand}"/>
+                <Button Grid.Column="1" VerticalAlignment="Center" x:Name="StopButton" Content="Stop" />
+                <Slider Grid.Column="2" VerticalAlignment="Center" x:Name="SeekerSlider" />
+                <StackPanel Grid.Column="3" x:Name="VolumeSlider" VerticalAlignment="Center" Orientation="Horizontal"
+                            Spacing="5" Margin="5">
                     <TextBlock Text="🔊" VerticalAlignment="Center" />
-                    <Slider VerticalAlignment="Center" Width="100" Minimum="0" Maximum="100" Value="75" ValueChanged="VolumeSlider_OnValueChanged" />
+                    <Slider VerticalAlignment="Center" Width="100" Minimum="0" Maximum="100" Value="75"
+                            ValueChanged="VolumeSlider_OnValueChanged" />
                 </StackPanel>
             </Grid>
         </Grid>
-        
+
         <!-- Download Overlay -->
         <Grid IsVisible="{Binding DownloadOverlayActive}" Background="Black" Opacity="70" Margin="5">
-            <TextBox Text="Download Progress" HorizontalAlignment="Center"></TextBox>
-            <ProgressBar ShowProgressText="True" Value="{Binding DownloadVideoProgress, Mode=OneWay}"></ProgressBar>
+            <StackPanel Orientation="Vertical" VerticalAlignment="Center" Spacing="5">
+                <TextBlock Text="Download Progress" HorizontalAlignment="Center"></TextBlock>
+                <ProgressBar Width="300" ShowProgressText="True" Value="{Binding DownloadVideoProgress, Mode=OneWay}"></ProgressBar>
+            </StackPanel>
+
         </Grid>
     </Grid>
 </UserControl>

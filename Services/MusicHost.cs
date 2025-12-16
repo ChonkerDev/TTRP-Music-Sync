@@ -15,16 +15,14 @@ public class MusicHost {
 
     public bool IsRunning => _isRunning;
     public event Action<string> OnLog;
-    
+
     public List<TcpClient> Clients => _clients;
-    
+
     public Action<TcpClient> OnClientConnected;
     public Action<TcpClient> OnClientDisconnected;
 
     public MusicHost() {
-        OnLog += message => {
-            Console.WriteLine(message);
-        };
+        OnLog += message => { Console.WriteLine(message); };
     }
 
     public async Task StartHost(int port = 5000) {
@@ -54,7 +52,7 @@ public class MusicHost {
         });
     }
 
-    public async Task BroadcastMessage(SyncMessage message) {
+    public async Task BroadcastMessage(SyncMessage message, TcpClient? tcpClient = null) {
         message.Timestamp = DateTimeOffset.UtcNow.ToUnixTimeMilliseconds();
         var json = JsonSerializer.Serialize(message);
         var data = Encoding.UTF8.GetBytes(json + "\n");
@@ -63,6 +61,10 @@ public class MusicHost {
 
         foreach (var client in _clients) {
             try {
+                if (tcpClient != null && tcpClient != client) {
+                    continue;
+                }
+
                 await client.GetStream().WriteAsync(data);
             }
             catch {
@@ -89,6 +91,7 @@ public class MusicHost {
 }
 
 public enum MessageType {
+    LoadAndPlay,
     Play,
     Pause,
     Seek,
@@ -97,6 +100,9 @@ public enum MessageType {
 
 public class SyncMessage {
     public MessageType Type { get; set; }
-    public double Position { get; set; } // Position in seconds
+    public string FileUrl { get; set; }
+
+    public string FileId { get; set; }
+    
     public long Timestamp { get; set; }
 }
