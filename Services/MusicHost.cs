@@ -21,6 +21,8 @@ public class MusicHost {
     public Action<TcpClient> OnClientConnected;
     public Action<TcpClient> OnClientDisconnected;
 
+    private Task CheckForClientConnections;
+
 
     public MusicHost() {
         OnLog += message => { Console.WriteLine(message); };
@@ -36,21 +38,23 @@ public class MusicHost {
         OnLog?.Invoke($"Host started on port {port}");
 
         // Accept clients in background
-        _ = Task.Run(async () => {
-            while (_isRunning) {
-                try {
-                    var client = await _listener.AcceptTcpClientAsync();
-                    _clients.Add(client);
-                    OnClientConnected?.Invoke(client);
-                    OnLog?.Invoke($"Client connected: {client.Client.RemoteEndPoint}");
-                }
-                catch (Exception ex) {
-                    if (_isRunning) {
-                        OnLog?.Invoke($"Error accepting client: {ex.Message}");
-                    }
+        CheckForClientConnections = CheckForClients();
+    }
+
+    private async Task CheckForClients() {
+        while (_isRunning) {
+            try {
+                var client = await _listener.AcceptTcpClientAsync();
+                _clients.Add(client);
+                OnClientConnected?.Invoke(client);
+                OnLog?.Invoke($"Client connected: {client.Client.RemoteEndPoint}");
+            }
+            catch (Exception ex) {
+                if (_isRunning) {
+                    OnLog?.Invoke($"Error accepting client: {ex.Message}");
                 }
             }
-        });
+        }
     }
 
     public async Task BroadcastMessage(PlayerState message, TcpClient? tcpClient = null) {
@@ -70,13 +74,13 @@ public class MusicHost {
             }
             catch {
                 disconnected.Add(client);
-                OnClientDisconnected?.Invoke(client);
             }
         }
 
         // Remove disconnected clients
         foreach (var client in disconnected) {
             _clients.Remove(client);
+            OnClientDisconnected?.Invoke(client);
             OnLog?.Invoke("Client disconnected");
         }
     }
@@ -92,6 +96,7 @@ public class MusicHost {
 }
 
 public class PlayerState {
+    public bool Disconnected { get; set; }
     public bool FileLoaded { get; set; }
     public string FileUrl { get; set; }
 

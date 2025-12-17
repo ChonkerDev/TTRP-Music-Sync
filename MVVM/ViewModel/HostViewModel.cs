@@ -48,19 +48,16 @@ public partial class HostViewModel : ObservableObject {
     [ObservableProperty] private string _searchBoxText;
     [ObservableProperty] private bool _isFileLoaded;
     [ObservableProperty] private string _fileLoadedText;
+    [ObservableProperty] private int _numClientsConnected;
 
     private float _currentVolume = .75f;
 
     public ObservableCollection<MusicTableEntryModel> MusicList { get; }
 
-    private ObservableCollection<string> ConnectedClients = new();
-
-    public int ClientsConnected => ConnectedClients.Count; 
     
     private MusicTableEntryModel? _currentMusicData;
     
     private PlayerState _currentPlayerState = new();
-
 
 
     [RelayCommand]
@@ -84,30 +81,26 @@ public partial class HostViewModel : ObservableObject {
         NotificationService.Notify("Host Started", "", NotificationType.Success);
         OnPropertyChanged(nameof(IsHosting));
 
-        ConnectedClients = new();
-        _musicHost.OnClientConnected += client => {
-            _ = HandleClientConnected(client);
-        };
+        NumClientsConnected = 0;
+        _musicHost.OnClientConnected += HandleClientConnected;
         _musicHost.OnClientDisconnected += OnClientDisconnected;
     }
 
     private void OnClientDisconnected(TcpClient obj) {
-        ConnectedClients.Add("Client");
+        NumClientsConnected = _musicHost.Clients.Count;
         NotificationService.Notify("Client Disconnected", "", NotificationType.Information);
-        OnPropertyChanged(nameof(ClientsConnected));
+
     }
 
-    private async Task HandleClientConnected(TcpClient client) {
-        ConnectedClients.Remove("Client");
+    private void HandleClientConnected(TcpClient client) {
+        NumClientsConnected = _musicHost.Clients.Count;
         NotificationService.Notify("Client Connected", "", NotificationType.Information);
-            await _musicHost.BroadcastMessage(_currentPlayerState, client);
-            OnPropertyChanged(nameof(ClientsConnected));
+        _musicHost.BroadcastMessage(_currentPlayerState, client);
 
     }
 
     [RelayCommand]
     public void StopHost() {
-        if (!_musicHost.IsRunning) return;
         _musicHost.Stop();
         _naudioPlayerService.Stop();
         IsFileLoaded = false;
@@ -192,6 +185,7 @@ public partial class HostViewModel : ObservableObject {
         _currentPlayerState.FileLoaded = false;
         _currentPlayerState.FileUrl = null;
         _currentPlayerState.FileId = null;
+        IsFileLoaded = false;
         await _musicHost.BroadcastMessage(_currentPlayerState);
     }
 
