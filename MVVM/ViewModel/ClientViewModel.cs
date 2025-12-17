@@ -73,7 +73,7 @@ public partial class ClientViewModel : ObservableObject {
         _musicClient.OnConnected -= OnConnected;
         _musicClient.OnDisconnected -= OnDisconnected;
         IsConnected = false;
-        NotificationService.Notify("Disconnected", "", NotificationType.Warning);
+        NotificationService.Notify("Disconnected from Host", "", NotificationType.Warning);
     }
 
     private void OnConnected() {

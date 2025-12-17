@@ -46,7 +46,8 @@ public partial class ClientConnectedViewModel : ObservableObject {
     }
 
     private void OnDisconnected() {
-        NotificationService.Notify("Disconnected from host", "", NotificationType.Warning);
+        FileLoaded = false;
+        _nAudioPlayerService.Stop();
     }
 
     [ObservableProperty] private bool _isDownloadingFile;
